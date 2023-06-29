@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "71717890458",
+    "project_id": "nowfood-cb879",
+    "storage_bucket": "nowfood-cb879.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:71717890458:android:07e529017895d3090b3223",
+        "android_client_info": {
+          "package_name": "com.example.nowfood"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "71717890458-udi2sajsm2h26q6o8se6ee4p849i61cm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBYFi43FrGdA3PJQx2gKUYP8RVopgwHXeU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "71717890458-udi2sajsm2h26q6o8se6ee4p849i61cm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
