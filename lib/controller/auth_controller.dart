@@ -1,173 +1,66 @@
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:nowfood/manager/firebase_manager.dart';
-import 'package:nowfood/view/login_page.dart';
+import 'package:nowfood/model/user_model.dart';
 
-import '../local/local_storage.dart';
-import '../model/user_model.dart' as model;
+class AuthController {
+  final FirebaseAuth auth = FirebaseAuth.instance;
+  final CollectionReference usersCollection =
+      FirebaseFirestore.instance.collection('users');
 
+  bool get success => false;
 
-class AuthenticateController extends GetxController with CacheManager {
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController phoneController = TextEditingController();
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-  final TextEditingController addressController = TextEditingController();
-  //late String userTypeController = 'Buyer';
-
-  RxBool isLoggedIn = false.obs;
-  Rx<bool> isObscure = true.obs;
-  Rx<bool> isLoading = false.obs;
-
-  final loginFormKey = GlobalKey<FormState>();
-  final registerFormKey = GlobalKey<FormState>();
-
-  void toggleVisibility() {
-    isObscure.value = !isObscure.value;
-  }
-
-  void checkLoginStatus() {
-    //final userType = getUserType();
-
-   // if (userType == null || userType.isEmpty) {
-      Get.off(const LoginPage());
-/*     } else {
-      if (userType == "Seller") {
-        Get.offAll(const SellerHomeScreen());
-      } else {
-        Get.offAll(const BuyerHomeScreen());
-      }
-    } */
-  }
-
-  /* void toggleLoading({bool showMessage = false, String message = ''}) {
-    isLoading.value = !isLoading.value;
-    if (showMessage) {
-      Utils.showSnackBar(
-        message,
-        isSuccess: false,
-      );
-    }
-  } */
-
-/*   void resetPassword(String email) async {
+  Future<UserModel?> signInWithEmailAndPassword(
+      String email, String password) async {
     try {
-      await firebaseAuth.sendPasswordResetEmail(email: email);
-      Get.snackbar(
-        'Success',
-        'Password reset email is send successfully.',
-      );
-    } catch (err) {
-      Get.snackbar(
-        'Error',
-        err.toString(),
-      );
-    }
-  } */
+      final UserCredential userCredential = await auth
+          .signInWithEmailAndPassword(email: email, password: password);
+      final User? user = userCredential.user;
 
- Future<bool> registerUser({
-    required String email,
-    required String password,
-    required String name,
-    required String phone,
-    required String address,
-  }) async {
-    try {
-      if (registerFormKey.currentState!.validate()) {
-        registerFormKey.currentState!.save();
-        UserCredential cred = await firebaseAuth.createUserWithEmailAndPassword(
-          email: email,
-          password: password,
-        );
-        await firebaseAuth.currentUser!.sendEmailVerification();
+      if (user != null) {
+        final DocumentSnapshot snapshot =
+            await usersCollection.doc(user.uid).get();
 
-        model.User user = model.User(
-          name: name,
-          uid: cred.user!.uid,
-          phone: phone,
-          email: email,
-          profilePhoto: "",
-          address: address,
-        );
-
-        await firestore
-            .collection("users")
-            .doc(cred.user!.uid)
-            .set(user.toJson());
-
-        removeToken();
-       // toggleLoading();
-
-        Get.snackbar(
-          'Account created successfully!',
-          'Please verify account to proceed.',
-        );
-        return true;
+        final UserModel currentUser = UserModel(
+            uId: user.uid,
+            email: user.email ?? '',
+            name: snapshot['name'] ?? '');
+        return currentUser;
       }
-      return false;
     } catch (e) {
-     // toggleLoading();
-      Get.snackbar(
-        'Error Logging in',
-        e.toString(),
-      );
-      return false;
+      print('Error signing in: $e');
     }
+    return null;
   }
 
- Future<bool> login(String email, String password, String userType) async {
+   Future<UserModel?> registerWithEmailAndPassword(
+      String email, String password, String name) async {
     try {
-      if (loginFormKey.currentState!.validate()) {
-        loginFormKey.currentState!.save();
+      final UserCredential userCredential = await auth
+          .createUserWithEmailAndPassword(email: email, password: password);
+      final User? user = userCredential.user;
 
-        UserCredential userCredential = await firebaseAuth
-            .signInWithEmailAndPassword(email: email, password: password);
+      if (user != null) {
+        final UserModel newUser =
+            UserModel(uId: user.uid, email: user.email ?? '', name: name);
 
-        User? user = userCredential.user;
-
-        if (user != null) {
-          if (user.emailVerified) {
-            setUserType(userType);
-            clearfields();
-            checkLoginStatus();
-            return true;
-          } else {
-            Get.snackbar(
-              'Error Logging in',
-              'Please verify your email to login.',
-            );
-            return true;
-          }
-        } else {
-          Get.snackbar(
-            'Error Logging in',
-            'Invalid email or password.',
-          );
-          return false;
-        }
+        await usersCollection.doc(newUser.uId).set(newUser.toMap());
+        return newUser;
       }
-      return false;
-    } catch (err) {
-      Get.snackbar(
-        'Error Logging in',
-        err.toString(),
-      );
-      return false;
+    } catch (e) {
+     // print('Error registering user: $e');
     }
+    return null;
   }
 
-  void logout() async {
-    removeToken();
-    await firebaseAuth.signOut();
+  UserModel? getCurrentUser() {
+    final User? user = auth.currentUser;
+    if (user != null) {
+      return UserModel.fromFirebaseUser(user);
+    }
+    return null;
   }
 
-  void clearfields() {
-    nameController.clear();
-    emailController.clear();
-    passwordController.clear();
-    phoneController.clear();
-    addressController.clear();
-   // userTypeController = 'Buyer';
+  Future<void> signOut() async {
+    await auth.signOut();
   }
 }
