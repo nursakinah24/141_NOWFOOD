@@ -23,7 +23,9 @@ class AuthController {
         final UserModel currentUser = UserModel(
             uId: user.uid,
             email: user.email ?? '',
-            name: snapshot['name'] ?? '');
+            name: snapshot['name'] ?? '',
+            address: snapshot['address'] ?? '',
+            phoneNumber: snapshot['phoneNumber'] ?? '',);
         return currentUser;
       }
     } catch (e) {
@@ -33,7 +35,7 @@ class AuthController {
   }
 
    Future<UserModel?> registerWithEmailAndPassword(
-      String email, String password, String name) async {
+      String email, String password, String name, String address, String phoneNumber) async {
     try {
       final UserCredential userCredential = await auth
           .createUserWithEmailAndPassword(email: email, password: password);
@@ -41,7 +43,7 @@ class AuthController {
 
       if (user != null) {
         final UserModel newUser =
-            UserModel(uId: user.uid, email: user.email ?? '', name: name);
+            UserModel(uId: user.uid, email: user.email ?? '', name: name, address: address, phoneNumber: phoneNumber);
 
         await usersCollection.doc(newUser.uId).set(newUser.toMap());
         return newUser;
