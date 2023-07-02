@@ -1,46 +1,86 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:convert';
 
-class User {
-  String name, email, uid, profilePhoto, phone, address;
+import 'package:firebase_auth/firebase_auth.dart';
 
-  User({
+class UserModel {
+  String name;
+  String email;
+  String uId;
+  String address;
+  String phoneNumber;
+  UserModel({
     required this.name,
     required this.email,
-    required this.uid,
-    required this.profilePhoto,
-    required this.phone,
+    required this.uId,
     required this.address,
+    required this.phoneNumber,
   });
 
-  Map<String, dynamic> toJson() => {
-        "name": name,
-        "email": email,
-        "uid": uid,
-        "profilePhoto": profilePhoto,
-        "phone": phone,
-        "address": address,
-      };
+  Map<String, dynamic> toMap() {
+    return {
+      'name': name,
+      'email': email,
+      'uId': uId,
+      'address': address,
+      'phoneNumber': phoneNumber,
+    };
+  }
 
-  static User fromSnap(DocumentSnapshot snap) {
-    var snapshot = snap.data() as Map<String, dynamic>;
-    return User(
-      email: snapshot["email"],
-      name: snapshot["name"],
-      uid: snapshot["uid"],
-      profilePhoto: snapshot["profilePhoto"],
-      phone: snapshot["phone"],
-      address: snapshot["address"],
+  factory UserModel.fromMap(Map<String, dynamic> map) {
+    return UserModel(
+      name: map['name'] ?? '',
+      email: map['email'] ?? '',
+      uId: map['uId'] ?? '',
+      address: map['address'] ?? '',
+      phoneNumber: map['phoneNumber'] ?? '',
     );
   }
 
-  static User fromMap(Map<String, dynamic> map) {
-    return User(
-      email: map["email"],
-      name: map["name"],
-      uid: map["uid"],
-      profilePhoto: map["profilePhoto"],
-      phone: map["phone"],
-      address: map["address"],
+  String toJson() => json.encode(toMap());
+
+  factory UserModel.fromJson(String source) => UserModel.fromMap(json.decode(source));
+
+  UserModel copyWith({
+    String? name,
+    String? email,
+    String? uId,
+    String? address,
+    String? phoneNumber,
+  }) {
+    return UserModel(
+      name: name ?? this.name,
+      email: email ?? this.email,
+      uId: uId ?? this.uId,
+      address: address ?? this.address,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
     );
   }
+
+  @override
+  String toString() {
+    return 'UserModel(name: $name, email: $email, uId: $uId, address: $address, phoneNumber: $phoneNumber)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+  
+    return other is UserModel &&
+      other.name == name &&
+      other.email == email &&
+      other.uId == uId &&
+      other.address == address &&
+      other.phoneNumber == phoneNumber;
+  }
+
+  @override
+  int get hashCode {
+    return name.hashCode ^
+      email.hashCode ^
+      uId.hashCode ^
+      address.hashCode ^
+      phoneNumber.hashCode;
+  }
+
+  static UserModel? fromFirebaseUser(User user) {}
 }
