@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:nowfood/model/user_model.dart';
+import 'package:nowfood/view/login_page.dart';
 
 class AuthController {
   final FirebaseAuth auth = FirebaseAuth.instance;
@@ -49,7 +51,7 @@ class AuthController {
         return newUser;
       }
     } catch (e) {
-     // print('Error registering user: $e');
+     print('Error registering user: $e');
     }
     return null;
   }
@@ -62,7 +64,11 @@ class AuthController {
     return null;
   }
 
-  Future<void> signOut() async {
+  Future<void> signOut(BuildContext context) async {
     await auth.signOut();
+    Navigator.pushReplacement(
+    context,
+    MaterialPageRoute(builder: (context) => Login()),
+  );
   }
 }

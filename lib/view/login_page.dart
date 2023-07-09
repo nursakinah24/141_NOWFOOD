@@ -3,12 +3,13 @@ import 'package:nowfood/controller/auth_controller.dart';
 import 'package:nowfood/manager/fonts_manager.dart';
 import 'package:nowfood/manager/values_manager.dart';
 import 'package:nowfood/model/user_model.dart';
-import 'package:nowfood/view/admin_page.dart';
+import 'package:nowfood/view/Admin/admin_get_food.dart';
+import 'package:nowfood/view/Admin/admin_home_page.dart';
 import 'package:nowfood/view/register_page.dart';
-import 'package:nowfood/view/home_page.dart';
-import 'package:nowfood/widgets/custom_text_form_field.dart';
-import 'package:nowfood/widgets/custom_text.dart';
-import 'package:nowfood/widgets/custom_button.dart';
+import 'package:nowfood/view/User/user_home_page.dart';
+import 'package:nowfood/widgets/Custom/custom_text_form_field.dart';
+import 'package:nowfood/widgets/Custom/custom_text.dart';
+import 'package:nowfood/widgets/Custom/custom_button.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -44,7 +45,7 @@ class _LoginState extends State<Login> {
               Container(
                 alignment: Alignment.topCenter,
                 child: Image.asset(
-                  "assets/images/logo.png",
+                  "assets/images/nowfood.png",
                   height: SizeManager.imageSize,
                   width: SizeManager.imageSize,
                   fit: BoxFit.scaleDown,
@@ -100,21 +101,6 @@ class _LoginState extends State<Login> {
                   return null;
                 },
               ),
-              /*  TextFormField(
-                decoration: const InputDecoration(
-                  labelText: 'Password',
-                ),
-                onChanged: (value) {
-                  password = value;
-                },
-                obscureText: true,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your password';
-                  }
-                  return null;
-                },
-              ), */
               const SizedBox(
                 height: SizeManager.sizeM,
               ),
@@ -122,60 +108,25 @@ class _LoginState extends State<Login> {
                 color: Colors.green,
                 hasInfiniteWidth: true,
                 buttonType: ButtonType.loading,
-                /*  loadingWidget: controller.isLoading.value
-                            ? const Center(
-                                child: CircularProgressIndicator(
-                                  color: Colors.white,
-                                  backgroundColor:
-                                      ColorsManager.scaffoldBgColor,
-                                ),
-                              )
-                            : null, */
                 onPressed: () async {
                   if (form.currentState!.validate()) {
                     if (email == 'admin@admin.com' && password == 'password') {
-                      Navigator.push(
+                      Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const AdminPage(),
+                          builder: (context) => const AdminHomePage(),
                         ),
                       );
                       setState(() {});
-                      // Perform admin login
-                      // showToast('Admin login successful');
-                      // Navigate to the admin home screen
                     } else {
                       UserModel? currentUser = await authCtrl
                           .signInWithEmailAndPassword(email!, password!);
                       if (currentUser != null) {
                         // ignore: use_build_context_synchronously
-                        Navigator.push(context,
+                        Navigator.pushReplacement(context,
                             MaterialPageRoute(builder: (context) {
-                          return const HomePage();
+                          return const UserHomePage();
                         }));
-                        // Login successful
-                        /*             showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: const Text('Login Successful'),
-                            content: const Text(
-                                'You have been successfully logged in.'),
-                            actions: <Widget>[
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.push(context,
-                                      MaterialPageRoute(builder: (context) {
-                                    return HomePage();
-                                  }));
-                                  // Navigate to the next screen or perform any desired action
-                                },
-                                child: const Text('OK'),
-                              ),
-                            ],
-                          );
-                        },
-                      ); */
                       } else {
                         // Login failed
                         // ignore: use_build_context_synchronously
@@ -233,14 +184,6 @@ class _LoginState extends State<Login> {
                   ),
                 ],
               ),
-             /*  TextButton(
-                onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return Register();
-                  }));
-                },
-                child: const Text('Create an account'),
-              ), */
             ],
           ),
         ),
