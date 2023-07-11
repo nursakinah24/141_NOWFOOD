@@ -141,6 +141,7 @@ class _AddGetFoodState extends State<AddGetFood> {
                                 ownerId: getCurrentUserId(),
                                 imageUrl: '',
                                 price: int.parse(_priceController.text),
+                                status: 'pending',
                               );
                               final user = FirebaseAuth.instance.currentUser;
                                 if (user != null) {

@@ -22,7 +22,7 @@ class _GetFoodPageState extends State<GetFoodPage> {
         title: const Text('Get Food'),
       ),
       body: StreamBuilder<List<GetFood>>(
-        stream: _getFoodController.getGetFoods(),
+        stream: _getFoodController.getConfirmedGetFoods(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             final getFoods = snapshot.data!;

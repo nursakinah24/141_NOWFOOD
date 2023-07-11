@@ -22,7 +22,7 @@ class HistoryPage extends StatelessWidget {
             children: [
               ListTile(
                 leading: Icon(
-                  Icons.food_bank,
+                  Icons.pending_outlined,
                   color: Colors.green,
                   size: 48,
                 ),
@@ -43,7 +43,7 @@ class HistoryPage extends StatelessWidget {
               ),
               ListTile(
                 leading: Icon(
-                  Icons.save,
+                  Icons.food_bank,
                   color: Colors.green,
                   size: 48,
                 ),

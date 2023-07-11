@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:nowfood/controller/get_food_controller.dart';
 import 'package:nowfood/manager/values_manager.dart';
@@ -17,12 +18,15 @@ class _HistoryGetFoodPageState extends State<HistoryGetFoodPage> {
 
   @override
   Widget build(BuildContext context) {
+     final User? currentUser = FirebaseAuth.instance.currentUser;
     return Scaffold(
       appBar: AppBar(
         title: const Text('History Get Food'),
       ),
       body: StreamBuilder<List<GetFood>>(
-        stream: _getFoodController.getGetFoods(),
+        stream: currentUser != null
+            ? _getFoodController.getAcceptedGetFoods(currentUser)
+            : Stream<List<GetFood>>.empty(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             final getFoods = snapshot.data!;

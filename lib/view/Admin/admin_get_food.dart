@@ -14,7 +14,7 @@ class AdminGetFood extends StatefulWidget {
 
 class _AdminGetFoodState extends State<AdminGetFood> {
   final GetFoodController _getFoodController = GetFoodController();
-
+  List<GetFood> getFoods = [];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,25 +38,14 @@ class _AdminGetFoodState extends State<AdminGetFood> {
           return CircularProgressIndicator();
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.add),
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const AddGetFood()),
-          );
-        },
-      ),
     );
   }
 
   Widget _buildGetFoodCard(GetFood getFood) {
-    /*  final priceFormat = NumberFormat.currency(
-    symbol: 'Rp',
-    decimalDigits: 2,
-    locale: 'id_ID',
-  );
-  final formattedPrice = priceFormat.format(getFood.price); */
+//Remove the card from the list
+    if (getFood.status == 'confirmed') {
+      return Container(); // Remove the card from the list
+    }
     return GestureDetector(
         onTap: () {
           Navigator.push(
@@ -114,7 +103,9 @@ class _AdminGetFoodState extends State<AdminGetFood> {
                           ),
                         ],
                       ),
-                      const SizedBox(width: SizeManager.sizeXXL,),
+                      const SizedBox(
+                        width: SizeManager.sizeXXL,
+                      ),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
@@ -135,7 +126,8 @@ class _AdminGetFoodState extends State<AdminGetFood> {
                           SizedBox(height: 8),
                           Row(children: [
                             const Icon(
-                              Icons.location_pin, // Replace with your desired icon
+                              Icons
+                                  .location_pin, // Replace with your desired icon
                               color: Colors
                                   .black, // Replace with your desired icon color
                             ),
@@ -151,7 +143,22 @@ class _AdminGetFoodState extends State<AdminGetFood> {
                         ],
                       ),
                     ],
-                  ))
+                  )),
+              TextButton(
+                onPressed: () async {
+                  try {
+                    await _getFoodController.updateGetFoodStatus(
+                        getFood, 'confirmed');
+                    setState(() {
+                      getFoods.remove(getFood);
+                    });
+                    print('GetFood status updated successfully!');
+                  } catch (e) {
+                    print('Failed to update GetFood status: $e');
+                  }
+                },
+                child: const Text('Confirm'),
+              ),
             ],
           ),
         ));

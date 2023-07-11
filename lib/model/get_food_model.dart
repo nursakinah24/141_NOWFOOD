@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class GetFood {
-  String id, name, description, phoneNumber, address, ownerId, imageUrl;
+  String id, name, description, phoneNumber, address, ownerId, imageUrl, status;
   int price;
 
   GetFood({
@@ -13,6 +13,7 @@ class GetFood {
     required this.ownerId,
     required this.imageUrl,
     required this.price,
+    required this.status,
   });
 
   Map<String, dynamic> toJson() => {
@@ -27,6 +28,7 @@ class GetFood {
       };
 
   static GetFood fromSnap(DocumentSnapshot snap) {
+    //final data = snap.data() as Map<String, dynamic>;
     var snapshot = snap.data() as Map<String, dynamic>;
 
     return GetFood(
@@ -38,10 +40,12 @@ class GetFood {
       ownerId: snapshot['ownerId'] ?? '',
       imageUrl: snapshot['imageUrl'] ?? '',
       price: snapshot['price'] ?? '',
+      status: snapshot['status'] ?? '',
     );
   }
 
   factory GetFood.fromMap(Map<String, dynamic> map) {
+   // final data = snap.data() as Map<String, dynamic>;
     return GetFood(
       id: map['id'] ?? '',
       name: map['name'] ?? '',
@@ -51,6 +55,7 @@ class GetFood {
       ownerId: map['ownerId'] ?? '',
       imageUrl: map['imageUrl'] ?? '',
       price: map['price'] ?? '',
+      status: map['status'] ?? '',
     );
   }
 }

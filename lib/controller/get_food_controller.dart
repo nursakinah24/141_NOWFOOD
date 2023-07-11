@@ -11,9 +11,41 @@ class GetFoodController {
   final FirebaseStorage _storage = FirebaseStorage.instance;
   final ImagePicker _imagePicker = ImagePicker();
 
-  // Fetch all GetFood items
+  // Fetch all GetFood items for admin
   Stream<List<GetFood>> getGetFoods() {
     return _getFoodsCollection.snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) => GetFood.fromSnap(doc)).toList();
+    });
+  }
+
+//fetch all getFood items for user
+  Stream<List<GetFood>> getConfirmedGetFoods() {
+    return _getFoodsCollection
+        .where('status', isEqualTo: 'confirmed')
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) => GetFood.fromSnap(doc)).toList();
+    });
+  }
+
+//fetch getfood items for the pending page
+  Stream<List<GetFood>> getPendingGetFoods(User user) {
+    return _getFoodsCollection
+        .where('ownerId', isEqualTo: user.uid)
+        .where('status', isEqualTo: 'pending')
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) => GetFood.fromSnap(doc)).toList();
+    });
+  }
+
+  // Fetch GetFood items for the history
+  Stream<List<GetFood>> getAcceptedGetFoods(User user) {
+    return _getFoodsCollection
+        .where('ownerId', isEqualTo: user.uid)
+        .where('status', isEqualTo: 'confirmed')
+        .snapshots()
+        .map((snapshot) {
       return snapshot.docs.map((doc) => GetFood.fromSnap(doc)).toList();
     });
   }
@@ -33,14 +65,33 @@ class GetFoodController {
         'ownerId': user.uid,
         'imageUrl': imageUrl,
         'price': getFood.price,
+        'status': getFood.status,
       });
     } catch (e) {
       throw Exception('Failed to add GetFood: $e');
     }
   }
 
+  // Update the status of a GetFood item
+  Future<void> updateGetFoodStatus(GetFood getFood, String status) async {
+    try {
+      await _getFoodsCollection.doc(getFood.id).update({
+        'status': status,
+      });
+    } catch (e) {
+      throw Exception('Failed to update GetFood status: $e');
+    }
+  }
+
   // Update a GetFood item with an image
-  Future<void> updateGetFood(GetFood getFood, File? newImage, String name, String description, String phoneNumber, String address, double price) async {
+  Future<void> updateGetFood(
+      GetFood getFood,
+      File? newImage,
+      String name,
+      String description,
+      String phoneNumber,
+      String address,
+      double price) async {
     try {
       // Update the image if a new image is provided
       if (newImage != null) {
@@ -73,7 +124,7 @@ class GetFoodController {
   }
 
   // Delete a GetFood item and its corresponding image
-  Future<void> deleteGetFood(GetFood getFood) async {
+  /*  Future<void> deleteGetFood(GetFood getFood) async {
     try {
       // Delete the image from Firebase Storage
       if (getFood.imageUrl.isNotEmpty) {
@@ -86,6 +137,10 @@ class GetFoodController {
     } catch (e) {
       throw Exception('Failed to delete GetFood: $e');
     }
+  } */
+  Future<void> deleteGetFood(GetFood getFood) async {
+    await _getFoodsCollection.doc(getFood.id).delete();
+    await _storage.refFromURL(getFood.imageUrl).delete();
   }
 
   // Upload image to Firebase Storage

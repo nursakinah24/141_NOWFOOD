@@ -19,6 +19,39 @@ class SaveFoodController {
     });
   }
 
+ //fetch all getFood items for user
+  Stream<List<SaveFood>> getConfirmedSaveFoods() {
+    return _saveFoodsCollection
+        .where('status', isEqualTo: 'confirmed')
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) => SaveFood.fromSnap(doc)).toList();
+    });
+  }
+
+//fetch getfood items for the pending page
+  Stream<List<SaveFood>> getPendingSaveFoods(User user) {
+    return _saveFoodsCollection
+        .where('ownerId', isEqualTo: user.uid)
+        .where('status', isEqualTo: 'pending')
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) => SaveFood.fromSnap(doc)).toList();
+    });
+  }
+
+  // Fetch GetFood items for the history
+  Stream<List<SaveFood>> getAcceptedSaveFoods(User user) {
+    return _saveFoodsCollection
+        .where('ownerId', isEqualTo: user.uid)
+        .where('status', isEqualTo: 'confirmed')
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) => SaveFood.fromSnap(doc)).toList();
+    });
+  }
+
+
   // Add a new GetFood item with an image
 Future<void> addSaveFood(SaveFood saveFood, File image, User user) async {
   try {

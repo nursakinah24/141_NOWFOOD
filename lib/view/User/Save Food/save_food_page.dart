@@ -23,7 +23,7 @@ class _SaveFoodPageState extends State<SaveFoodPage> {
         title: const Text('Save Food'),
       ),
        body: StreamBuilder<List<SaveFood>>(
-        stream: _saveFoodController.getSaveFoods(),
+        stream: _saveFoodController.getConfirmedSaveFoods(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             final saveFoods = snapshot.data!;

@@ -1,8 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:nowfood/controller/get_food_controller.dart';
 import 'package:nowfood/manager/values_manager.dart';
 import 'package:nowfood/model/get_food_model.dart';
-import 'package:nowfood/view/User/Get%20Food/add_get_food.dart';
 import 'package:nowfood/view/User/Get%20Food/detail_get_food.dart';
 import 'package:nowfood/view/User/Get%20Food/edit_get_food.dart';
 
@@ -18,12 +18,15 @@ class _PendingGetFoodPageState extends State<PendingGetFoodPage> {
 
   @override
   Widget build(BuildContext context) {
+    final User? currentUser = FirebaseAuth.instance.currentUser;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Pending Get Food'),
       ),
-      body: StreamBuilder<List<GetFood>>(
-        stream: _getFoodController.getGetFoods(),
+    body: StreamBuilder<List<GetFood>>(
+        stream: currentUser != null
+            ? _getFoodController.getPendingGetFoods(currentUser)
+            : Stream<List<GetFood>>.empty(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             final getFoods = snapshot.data!;
@@ -204,7 +207,7 @@ void _updateGetFood(GetFood getFood) {
   Navigator.push(
     context,
     MaterialPageRoute(
-      builder: (context) => EditGetFoodPage(getFood: getFood),
+      builder: (context) => EditGetFoodPage(getFood: getFood, existingImage: getFood.imageUrl,),
     ),
   );
 }

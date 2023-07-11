@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SaveFood {
-  String id, name, description, phoneNumber, address, ownerId, imageUrl;
+  String id, name, description, phoneNumber, address, ownerId, imageUrl, status;
   int price;
 
   SaveFood({
@@ -13,6 +13,7 @@ class SaveFood {
     required this.ownerId,
     required this.imageUrl,
     required this.price,
+    required this.status,
   });
 
   Map<String, dynamic> toJson() => {
@@ -38,6 +39,7 @@ class SaveFood {
       ownerId: snapshot['ownerId'] ?? '',
       imageUrl: snapshot['imageUrl'] ?? '',
       price: snapshot['price'] ?? '',
+      status: snapshot['status'] ?? '',
     );
   }
 
@@ -51,6 +53,7 @@ class SaveFood {
       ownerId: map['ownerId'] ?? '',
       imageUrl: map['imageUrl'] ?? '',
       price: map['price'] ?? '',
+      status: map['status'] ?? '',
     );
   }
 }

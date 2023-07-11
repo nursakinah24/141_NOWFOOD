@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:nowfood/controller/save_food_controller.dart';
 import 'package:nowfood/manager/values_manager.dart';
 import 'package:nowfood/model/save_food_model.dart';
+import 'package:nowfood/view/User/Save%20Food/save_food_page.dart';
 import 'package:nowfood/view/login_page.dart';
 
 class AddSaveFood extends StatefulWidget {
@@ -140,6 +141,7 @@ class _AddSaveFoodState extends State<AddSaveFood> {
                                 ownerId: getCurrentUserId(),
                                 imageUrl: '',
                                 price: int.parse(_priceController.text),
+                                status: 'pending'
                               );
                               final user = FirebaseAuth.instance.currentUser;
                                 if (user != null) {
@@ -148,7 +150,7 @@ class _AddSaveFoodState extends State<AddSaveFood> {
                               Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => const AddSaveFood()),
+                                    builder: (context) => const SaveFoodPage()),
                               );
                             } else {
                               Navigator.pushReplacement(
